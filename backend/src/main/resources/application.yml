@@ -1,0 +1,58 @@
+server:
+  port: 8081
+
+spring:
+
+  # ── Database — MySQL ──────────────────────────────────────────────
+  datasource:
+    url: jdbc:mysql://localhost:3306/ecommerce_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    username: root
+    password: Prince@2003
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: false
+
+  # ── OAuth2 — Google and GitHub login ─────────────────────────────
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: your_google_client_id
+            client-secret: your_google_client_secret
+            scope: email, profile
+          github:
+            client-id: your_github_client_id
+            client-secret: your_github_client_secret
+            scope: user:email
+
+  # ── Spring AI — Ollama (local) ────────────────────────────────────
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: llama3.1:8b      # tool-capable; pull with: ollama pull llama3.1:8b
+          temperature: 0.3
+      embedding:
+        options:
+          model: nomic-embed-text # pull with: ollama pull nomic-embed-text
+
+# ── Stripe ────────────────────────────────────────────────────────
+stripe:
+  secret-key: ${STRIPE_SECRET_KEY:sk_test_dummy_not_real}
+  webhook:
+    secret: ${STRIPE_WEBHOOK_SECRET:}
+
+# ── App ───────────────────────────────────────────────────────────
+app:
+  oauth2:
+    authorizedRedirectUri: http://localhost:3000
+  ai:
+    rag-top-k: 4
+    rag-similarity-threshold: 0.65
+    max-history-messages: 10
